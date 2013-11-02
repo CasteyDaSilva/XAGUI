@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\Test-SDL\Main.cpp" />
+    <ClCompile Include="..\Test-SDL\FontSDL.cpp">
+      <Filter>Font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Test-SDL\RendererSDL.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Test-SDL\StaticTextSDL.cpp">
+      <Filter>StaticText</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Test-SDL\TextureSDL.cpp">
+      <Filter>Texture</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Font">
+      <UniqueIdentifier>{f8e7624d-b5f2-45fd-b75d-f5098f0bb989}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderer">
+      <UniqueIdentifier>{077ec3f1-64cb-48b6-b90c-6ff5d4ddfbe3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Texture">
+      <UniqueIdentifier>{9440b584-66bd-476a-b1fa-aa81e6d45469}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="StaticText">
+      <UniqueIdentifier>{1fdcdec5-4cf3-4f1c-89b2-86d11a2b03e6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Test-SDL\Main.h" />
+    <ClInclude Include="..\Test-SDL\FontSDL.h">
+      <Filter>Font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Test-SDL\RendererSDL.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Test-SDL\StaticTextSDL.h">
+      <Filter>StaticText</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Test-SDL\TextureSDL.h">
+      <Filter>Texture</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
