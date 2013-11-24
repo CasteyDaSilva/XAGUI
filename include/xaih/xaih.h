@@ -15,6 +15,7 @@
  ***********************************************/
 #include <ctime>
 #include <cmath>
+#Include <cstring>
 #include <string>
 #include <stdio.h>
 
