@@ -61,6 +61,9 @@
     <Filter Include="Controls\PictureBox">
       <UniqueIdentifier>{fe2c8421-534d-4619-861a-1ad7c9ff2299}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Controls\ControlBase">
+      <UniqueIdentifier>{ce8e02e1-2337-460d-9fc9-ceefcc8b5268}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\XAGUI.cpp" />
@@ -112,14 +115,17 @@
     <ClCompile Include="..\src\TextBox.cpp">
       <Filter>Controls\TextBox</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Texture.cpp">
-      <Filter>Controls\TextBox</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\XML\tinyxml2.cpp">
       <Filter>TinyXML2</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Window.cpp">
       <Filter>Controls\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Texture.cpp">
+      <Filter>Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ControlBase.cpp">
+      <Filter>Controls\ControlBase</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -172,14 +178,17 @@
     <ClInclude Include="..\include\Texture.h">
       <Filter>Texture</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\TextBox.h">
-      <Filter>Texture</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\XML\tinyxml2.h">
       <Filter>TinyXML2</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Window.h">
       <Filter>Controls\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TextBox.h">
+      <Filter>Controls\TextBox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ControlBase.h">
+      <Filter>Controls\ControlBase</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

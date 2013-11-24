@@ -109,23 +109,17 @@ void CheckBox::Render()
 		{
 			XAGUI::GetRenderer()->Render(XAGUI::GetSkin(), GetAbsX(), GetAbsY(), GetWidth(), 
 				GetHeight(), GetSrcX(GetState()), GetSrcY(GetState()), GetSrcWidth(), GetSrcHeight(), 
-				GetRed(GetState()), GetGreen(GetState()), GetBlue(GetState()), GetAlpha(GetState()));
+				GetColor(GetState()));
 		}
 		else
 		{
 			XAGUI::GetRenderer()->Render(XAGUI::GetSkin(), GetAbsX(), GetAbsY(), GetWidth(), 
 				GetHeight(), GetCheckedSrcX(GetState()), GetCheckedSrcY(GetState()), GetSrcWidth(), 
-				GetSrcHeight(), GetRed(GetState()), GetGreen(GetState()), GetBlue(GetState()), 
-				GetAlpha(GetState()));
+				GetSrcHeight(), GetColor(GetState()));
 		}
 
 		Control::Render();
 	}
-}
-
-void CheckBox::OnClickEvent()
-{
-	(IsChecked()) ? SetChecked(false) : SetChecked(true); 
 }
 
 void CheckBox::SetCheckedSrcX(ControlState controlState, usint checkedsrcX)
@@ -152,6 +146,11 @@ void CheckBox::SetCheckedSrcY(ControlState controlState, usint checkedsrcY)
 	{
 		_checkedSrcY[controlState] = checkedsrcY; 
 	}
+}
+
+void CheckBox::OnClickEvent()
+{
+	(IsChecked()) ? SetChecked(false) : SetChecked(true); 
 }
 
 };

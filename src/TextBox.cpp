@@ -34,9 +34,9 @@ void TextBox::ReadProperties(tinyxml2::XMLElement* element)
 	if (cstring != 0)
 	{
 		std::string string = cstring;
-		if (*string.rbegin() == 'p')
+		if (*string.rbegin() == 'r')
 		{
-			_label->SetPermilX(xaih::StrToInt(xaih::ParseString(string, "p").c_str()), textCenter);
+			_label->SetRatioX(xaih::StrToDouble(xaih::ParseString(string, "r").c_str()));
 		}
 		else
 		{
@@ -48,9 +48,9 @@ void TextBox::ReadProperties(tinyxml2::XMLElement* element)
 	if (cstring != 0)
 	{
 		std::string string = cstring;
-		if (*string.rbegin() == 'p')
+		if (*string.rbegin() == 'r')
 		{
-			_label->SetPermilY(xaih::StrToInt(xaih::ParseString(string, "p").c_str()), textCenter);
+			_label->SetRatioY(xaih::StrToDouble(xaih::ParseString(string, "r").c_str()));
 		}
 		else
 		{
@@ -134,17 +134,16 @@ void TextBox::Render()
 		{
 			XAGUI::GetRenderer()->Render(XAGUI::GetSkin(), GetCaretPositionX(), GetCaretPositionY(), 
 				GetCaretSrcWidth(), _label->GetHeight(), GetCaretSrcX(), GetCaretSrcY(), 
-				GetCaretSrcWidth(), GetCaretSrcHeight(), _label->GetRed(GetState()), 
-				_label->GetGreen(GetState()), _label->GetBlue(GetState()), _label->GetAlpha(GetState()));
+				GetCaretSrcWidth(), GetCaretSrcHeight(), _label->GetColor(GetState()));
 		}
 	}
 }
 
 void TextBox::InsertText(cchar* text, int position)
 {
-	_label->GetStaticText()->GetPointerToString()->insert(GetCaretPosition(), text);
+	_label->GetStaticText()->GetPointerToString()->insert(position, text);
 	SetText(_label->GetStaticText()->Get());
-	SetCaretPosition(GetCaretPosition() + strlen(text));
+	SetCaretPosition(position + strlen(text));
 }
 
 void TextBox::RemoveCharacter(int position)
@@ -173,12 +172,12 @@ void TextBox::SetCaretPosition(int position)
 	_caretPositionY = _label->GetAbsY();
 }
 
-bool TextBox::MouseButtonEvent(int x, int y, MouseButton button, bool down)
+Control* TextBox::MouseButtonDownEvent(int x, int y, uchar button)
 {
-	if (button == MOUSE_BUTTON_LEFT && down)
+	Control* control = Control::MouseButtonDownEvent(x, y, button);
+	if (control == this)
 	{
-		if (xaih::IsPointInRectangle(static_cast<float>(x), static_cast<float>(y), 
-			static_cast<float>(GetAbsX()), static_cast<float>(GetAbsY()), GetWidth(), GetHeight()))
+		if (xaih::IsPointInRectangle(x, y, GetAbsX(), GetAbsY(), GetWidth(), GetHeight()))
 		{
 			int characterX = _label->GetAbsX();
 			int characterWidth = 0;
@@ -201,37 +200,41 @@ bool TextBox::MouseButtonEvent(int x, int y, MouseButton button, bool down)
 				SetCaretPosition(_label->GetStaticText()->GetLength());
 		}
 	}
-
-	return Control::IsConsumeMouseEvents();
+	return control;
 }
 
-bool TextBox::KeyEvent(Key key, bool down)
+void TextBox::OnKeyDownEvent(SDL_Scancode key)
 {
-	if (down)
+	switch (key)
 	{
-		switch (key)
-		{
-			case KEY_LEFT_ARROW:
-				SetCaretPosition(GetCaretPosition() - 1);
-				break;
+		case SDL_SCANCODE_LEFT:
+			SetCaretPosition(GetCaretPosition() - 1);
+			break;
 
-			case KEY_RIGHT_ARROW:
-				SetCaretPosition(GetCaretPosition() + 1);
-				break;
+		case SDL_SCANCODE_RIGHT:
+			SetCaretPosition(GetCaretPosition() + 1);
+			break;
 
-			case KEY_BACKSPACE:
-				RemoveCharacter(GetCaretPosition() - 1);
-				break;
-		}
+		case SDL_SCANCODE_BACKSPACE:
+			RemoveCharacter(GetCaretPosition() - 1);
+			break;
 	}
-
-	return Control::IsConsumeKeyboardEvents();
 }
 
 bool TextBox::TextInputEvent(std::string text)
 {
 	InsertText(text.c_str(), GetCaretPosition());
 	return Control::IsConsumeKeyboardEvents();
+}
+
+void TextBox::OnGotFocus()
+{
+	XAGUI::StartTextInput();
+}
+
+void TextBox::OnLostFocus()
+{
+	XAGUI::StopTextInput();
 }
 
 };

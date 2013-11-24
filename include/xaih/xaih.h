@@ -14,6 +14,7 @@
  * Required Headers
  ***********************************************/
 #include <ctime>
+#include <cmath>
 #include <string>
 #include <stdio.h>
 
@@ -350,7 +351,7 @@ class xaih
 		static type Clamp(type current, type2 min, type3 max)
 		{
 			if (current >= max) return max;
-			if (current <= min) return min;
+			else if (current <= min) return min;
 			return current;
 		}
 
@@ -387,13 +388,29 @@ class xaih
 		 * @param rectHeight Rectangle's height.
 		 * @return True if point is in rectangle, false when isn't.
 		 */
+		static bool IsPointInRectangle(int pointX, int pointY, int rectX, int rectY, 
+			int rectWidth, int rectHeight)
+		{
+			if (rectX < pointX && rectY < pointY && rectX + rectWidth > pointX && 
+				rectY + rectHeight > pointY) return true;
+			return false;
+		}
+
+		/**
+		 * Checks if point is in specified rectangle.
+		 * @param pointX Point's x position.
+		 * @param pointY Point's y position.
+		 * @param rectX Rectangle's x position.
+		 * @param rectY Rectangle's y position.
+		 * @param rectWidth Rectangle's width.
+		 * @param rectHeight Rectangle's height.
+		 * @return True if point is in rectangle, false when isn't.
+		 */
 		static bool IsPointInRectangle(float pointX, float pointY, float rectX, float rectY, 
 			unsigned int rectWidth, unsigned int rectHeight)
 		{
 			if (rectX <= pointX && rectY <= pointY && rectX + rectWidth >= pointX && 
-				rectY + rectHeight >= pointY)
-				return true;
-
+				rectY + rectHeight >= pointY) return true;
 			return false;
 		}
 };

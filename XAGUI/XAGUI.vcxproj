@@ -15,6 +15,7 @@
     <ClCompile Include="..\src\Button.cpp" />
     <ClCompile Include="..\src\CheckBox.cpp" />
     <ClCompile Include="..\src\Control.cpp" />
+    <ClCompile Include="..\src\ControlBase.cpp" />
     <ClCompile Include="..\src\Font.cpp" />
     <ClCompile Include="..\src\Form.cpp" />
     <ClCompile Include="..\src\Label.cpp" />
@@ -40,6 +41,7 @@
     <ClInclude Include="..\include\Button.h" />
     <ClInclude Include="..\include\CheckBox.h" />
     <ClInclude Include="..\include\Control.h" />
+    <ClInclude Include="..\include\ControlBase.h" />
     <ClInclude Include="..\include\Font.h" />
     <ClInclude Include="..\include\Form.h" />
     <ClInclude Include="..\include\Label.h" />
@@ -91,7 +93,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)dependencies/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>XAGUI.h</PrecompiledHeaderFile>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -107,7 +109,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)dependencies/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>XAGUI.h</PrecompiledHeaderFile>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>

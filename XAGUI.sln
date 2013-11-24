@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XAGUI", "XAGUI\XAGUI.vcxproj", "{839AEAFC-E1D0-47B8-9302-DCF342E021E6}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test-SDL", "Test-SDL\Test-SDL.vcxproj", "{A89FA4FD-503A-4F20-B558-A09910C12C8A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test", "Test\Test.vcxproj", "{A89FA4FD-503A-4F20-B558-A09910C12C8A}"
 	ProjectSection(ProjectDependencies) = postProject
 		{839AEAFC-E1D0-47B8-9302-DCF342E021E6} = {839AEAFC-E1D0-47B8-9302-DCF342E021E6}
 	EndProjectSection

@@ -7,15 +7,20 @@ class Renderer
 
 		/**
 		 * Constructor
+		 * @param window
 		 * @param backBufferWidth Back buffer width.
 		 * @param backBufferHeight Back buffer height.
 		 */
-		Renderer(usint backBufferWidth, usint backBufferHeight);
+		Renderer(SDL_Window* window, usint backBufferWidth, usint backBufferHeight);
 
 		/**
 		 * Destructor
 		 */
 		virtual ~Renderer();
+
+		bool Initialize();
+
+		void Clear();
 
 		/**
 		 * Renders static text.
@@ -23,7 +28,7 @@ class Renderer
 		 * @param x X position
 		 * @param y Y position
 		 */
-		virtual void Render(StaticText* staticText, sint x, sint y) = 0;
+		virtual void Render(StaticText* staticText, sint x, sint y);
 
 		/**
 		 * Renders text.
@@ -31,13 +36,9 @@ class Renderer
 		 * @param text Text
 		 * @param x X position
 		 * @param y Y position
-		 * @param red Value for red channel of color.
-		 * @param green Value for green channel of color.
-		 * @param blue Value for blue channel of color.
-		 * @param alpha Value for alpha channel of color.
+		 * @param color .
 		 */
-		virtual void Render(Font* font, cchar* text, sint x, sint y, uchar red = 255, 
-			uchar green = 255, uchar blue = 255, uchar alpha = 255) = 0;
+		virtual void Render(Font* font, cchar* text, sint x, sint y, SDL_Color color);
 
 		/**
 		 * Renders texture.
@@ -50,31 +51,31 @@ class Renderer
 		 * @param srcY Y position of texture region.
 		 * @param srcWidth Width of texture region.
 		 * @param srcHeight Height of texture region.
-		 * @param red Value for red channel of color.
-		 * @param green Value for green channel of color.
-		 * @param blue Value for blue channel of color.
-		 * @param alpha Value for alpha channel of color.
+		 * @param color .
 		 */
 		virtual void Render(Texture* texture, sint x, sint y, usint width, usint height, usint srcX, 
-			usint srcY, usint srcWidth, usint srcHeight, uchar red, uchar green, uchar blue, 
-			uchar alpha) = 0;
+			usint srcY, usint srcWidth, usint srcHeight, SDL_Color color);
+		
+		void Present();
+
+		void Release();
+
+		inline SDL_Renderer* Get() const { return _renderer; }
 
 		/**
 		 * Returns pointer to texture object.
-		 * You need to overload this function with your own return texture type.
 		 * @param file Path to texture file.
 		 * @return Pointer to texture object.
 		 */
-		virtual Texture* GetTexture(cchar* file) const = 0;
+		virtual Texture* GetTexture(cchar* file) const;
 
 		/**
 		 * Returns pointer to font object.
-		 * You need to overload this function with your own return font type.
 		 * @param file Path to font file.
 		 * @param size Size of font.
 		 * @return Pointer to font object.
 		 */
-		virtual Font* GetFont(cchar* file, uchar size) const = 0; 
+		virtual Font* GetFont(cchar* file, usint size) const; 
 		
 		/**
 		 * Returns pointer to static text object.
@@ -83,7 +84,7 @@ class Renderer
 		 * @param text Text
 		 * @return Pointer to static text object.
 		 */
-		virtual StaticText* GetStaticText(cchar* file, uchar size, cchar* text) const = 0; 
+		virtual StaticText* GetStaticText(cchar* file, usint size, cchar* text) const; 
 
 		/**
 		 * Returns back buffer width.
@@ -111,10 +112,19 @@ class Renderer
 		virtual inline void SetBackBufferHeight(usint backBufferHeight) 
 		{ _backBufferHeight = backBufferHeight; }
 
-	private:
+	protected:
 
+		SDL_Window* _window;
+		SDL_Renderer* _renderer;
 		usint _backBufferWidth;
 		usint _backBufferHeight;
+
+		SDL_Surface* _surface;
+		SDL_Texture* _texture;
+		SDL_Rect _src;
+		SDL_Rect _dst;
+
+		static std::vector<Font*> _fonts;
 };
 
 #endif

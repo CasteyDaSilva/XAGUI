@@ -32,8 +32,8 @@ void PictureBox::Render()
 	if (GetImage() != 0 && IsVisible())
 	{
 		XAGUI::GetRenderer()->Render(GetImage(), GetAbsX(), GetAbsY(), GetWidth(), GetHeight(), 
-			GetSrcX(GetState()), GetSrcY(GetState()), GetSrcWidth(), GetSrcHeight(), GetRed(GetState()), 
-			GetGreen(GetState()), GetBlue(GetState()), GetAlpha(GetState()));
+			GetSrcX(GetState()), GetSrcY(GetState()), GetSrcWidth(), GetSrcHeight(), 
+			GetColor(GetState()));
 			
 		Control::Render();
 	}

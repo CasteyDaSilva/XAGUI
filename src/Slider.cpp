@@ -5,22 +5,28 @@ namespace XAGUI
 
 Slider::Slider()
 	: _orientation(ORIENTATION_HORIZONTAL), onValueChanged(0), _markerOffsetX(0), _markerOffsetY(0), 
-	_value(0), _minValue(0), _maxValue(0), _pressed(false)
+	_value(0), _minValue(0), _maxValue(0)
 {
 	_marker = new Button();
+	AddChild(GetMarker());
+	GetMarker()->onMouseMove.bind(this, &Slider::MarkerOnMouseMove);
+	GetMarker()->onMouseButtonDown.bind(this, &Slider::MarkerOnMouseButtonDown);
 }
 
 Slider::Slider(tinyxml2::XMLElement* element, Control* parent)
 	: Button(element, parent), _orientation(ORIENTATION_HORIZONTAL), onValueChanged(0), 
-	_markerOffsetX(0), _markerOffsetY(0), _value(0), _minValue(0), _maxValue(0), _pressed(false)
+	_markerOffsetX(0), _markerOffsetY(0), _value(0), _minValue(0), _maxValue(0)
 {
 	_marker = new Button();
+	AddChild(GetMarker());
+	GetMarker()->onMouseMove.bind(this, &Slider::MarkerOnMouseMove);
+	GetMarker()->onMouseButtonDown.bind(this, &Slider::MarkerOnMouseButtonDown);
 	ReadProperties(element);
 }
 
 Slider::~Slider()
 {
-	delete _marker;
+	
 }
 
 void Slider::Render()
@@ -34,8 +40,6 @@ void Slider::Render()
 
 void Slider::ReadProperties(tinyxml2::XMLElement* element)
 {
-	GetMarker()->SetParent(this);
-
 	cchar* cstring = element->Attribute("orientation");
 	if (cstring != 0)
 	{
@@ -65,9 +69,9 @@ void Slider::ReadProperties(tinyxml2::XMLElement* element)
 		{
 			GetMarker()->SetAutoWidth();
 		}
-		else if (*string.rbegin() == 'p')
+		else if (*string.rbegin() == 'r')
 		{
-			GetMarker()->SetPermilWidth(xaih::StrToUInt(xaih::ParseString(string, "p").c_str()));
+			GetMarker()->SetRatioWidth(xaih::StrToDouble(xaih::ParseString(string, "r").c_str()));
 		}
 		else
 		{
@@ -87,9 +91,9 @@ void Slider::ReadProperties(tinyxml2::XMLElement* element)
 		{
 			GetMarker()->SetAutoHeight();
 		}
-		else if (*string.rbegin() == 'p')
+		else if (*string.rbegin() == 'r')
 		{
-			GetMarker()->SetPermilHeight(xaih::StrToUInt(xaih::ParseString(string, "p").c_str()));
+			GetMarker()->SetRatioHeight(xaih::StrToDouble(xaih::ParseString(string, "r").c_str()));
 		}
 		else
 		{
@@ -109,6 +113,66 @@ void Slider::ReadProperties(tinyxml2::XMLElement* element)
 	if (cstring != 0)
 		GetMarker()->SetSrcY(CONTROL_STATE_NORMAL, xaih::StrToUInt(cstring));
 	
+	cstring = element->Attribute("mhSrcX");
+	if (cstring != 0)
+	{
+		GetMarker()->SetSrcX(CONTROL_STATE_HOVER, xaih::StrToUInt(cstring));
+	}
+	else
+	{
+		GetMarker()->SetSrcX(CONTROL_STATE_HOVER, GetMarker()->GetSrcX(CONTROL_STATE_NORMAL));
+	}
+
+	cstring = element->Attribute("mhSrcY");
+	if (cstring != 0)
+	{
+		GetMarker()->SetSrcY(CONTROL_STATE_HOVER, xaih::StrToUInt(cstring));
+	}
+	else
+	{
+		GetMarker()->SetSrcY(CONTROL_STATE_HOVER, GetMarker()->GetSrcY(CONTROL_STATE_NORMAL));
+	}
+
+	cstring = element->Attribute("maSrcX");
+	if (cstring != 0)
+	{
+		GetMarker()->SetSrcX(CONTROL_STATE_ACTIVE, xaih::StrToUInt(cstring));
+	}
+	else
+	{
+		GetMarker()->SetSrcX(CONTROL_STATE_ACTIVE, GetMarker()->GetSrcX(CONTROL_STATE_NORMAL));
+	}
+
+	cstring = element->Attribute("maSrcY");
+	if (cstring != 0)
+	{
+		GetMarker()->SetSrcY(CONTROL_STATE_ACTIVE, xaih::StrToUInt(cstring));
+	}
+	else
+	{
+		GetMarker()->SetSrcY(CONTROL_STATE_ACTIVE, GetMarker()->GetSrcY(CONTROL_STATE_NORMAL));
+	}
+
+	cstring = element->Attribute("mdSrcX");
+	if (cstring != 0)
+	{
+		GetMarker()->SetSrcX(CONTROL_STATE_DISABLED, xaih::StrToUInt(cstring));
+	}
+	else
+	{
+		GetMarker()->SetSrcX(CONTROL_STATE_DISABLED, GetMarker()->GetSrcX(CONTROL_STATE_NORMAL));
+	}
+
+	cstring = element->Attribute("mdSrcY");
+	if (cstring != 0)
+	{
+		GetMarker()->SetSrcY(CONTROL_STATE_DISABLED, xaih::StrToUInt(cstring));
+	}
+	else
+	{
+		GetMarker()->SetSrcY(CONTROL_STATE_DISABLED, GetMarker()->GetSrcY(CONTROL_STATE_NORMAL));
+	}
+
 	cstring = element->Attribute("mSrcW");
 	if (cstring != 0)
 		GetMarker()->SetSrcWidth(xaih::StrToUInt(cstring));
@@ -158,16 +222,16 @@ void Slider::SetValue(int value)
 { 
 	if (value < GetMinValue())
 	{
-		_value = GetMinValue();
+		value = GetMinValue();
 	}
 	else if (value > GetMaxValue())
 	{
-		_value = GetMaxValue();
+		value = GetMaxValue();
 	}
-	else
-	{
-		_value = value;
-	}
+
+	_value = value;
+
+	(onValueChanged != 0) ? onValueChanged(this) : OnValueChangedEvent();
 
 	if (GetOrientation() == ORIENTATION_VERTICAL)
 	{
@@ -183,14 +247,49 @@ void Slider::SetValue(int value)
 			/ 2.0f));
 		GetMarker()->SetY(GetMarkerOffsetY());
 	}
-
-	if (onValueChanged != 0) 
-		onValueChanged(this, GetValue());
 }
 
-void Slider::MouseMoveEvent(int x, int y)
+Control* Slider::MouseMoveEvent(int x, int y)
 {
-	if (_pressed)
+	Control* control = Control::MouseMoveEvent(x, y);
+	if (control == this && IsPressed())
+	{
+		if (GetOrientation() == ORIENTATION_VERTICAL)
+		{
+			SetValue(static_cast<int>((GetMaxValue() - GetMinValue()) / 
+				static_cast<float>(GetHeight() / static_cast<float>(y - GetAbsY()))));
+		}
+		else
+		{
+			SetValue(static_cast<int>((GetMaxValue() - GetMinValue()) / 
+				static_cast<float>(GetWidth() / static_cast<float>(x - GetAbsX()))));
+		}
+	}
+	return control;
+}
+
+Control* Slider::MouseButtonDownEvent(int x, int y, uchar button)
+{
+	Control* control = Control::MouseButtonDownEvent(x, y, button);
+	if (control == this)
+	{
+		if (GetOrientation() == ORIENTATION_VERTICAL)
+		{
+			SetValue(static_cast<int>((GetMaxValue() - GetMinValue()) / 
+				static_cast<float>(GetHeight() / static_cast<float>(y - GetAbsY()))));
+		}
+		else
+		{
+			SetValue(static_cast<int>((GetMaxValue() - GetMinValue()) / 
+				static_cast<float>(GetWidth() / static_cast<float>(x - GetAbsX()))));
+		}
+	}
+	return control;
+}
+
+void Slider::MarkerOnMouseMove(Control* control, int x, int y)
+{
+	if (GetMarker()->IsPressed())
 	{
 		if (GetOrientation() == ORIENTATION_VERTICAL)
 		{
@@ -205,33 +304,23 @@ void Slider::MouseMoveEvent(int x, int y)
 	}
 }
 
-bool Slider::MouseButtonEvent(int x, int y, MouseButton button, bool down)
+void Slider::MarkerOnMouseButtonDown(Control* control, int x, int y, uchar button)
 {
-	if (button == MOUSE_BUTTON_LEFT && down)
+	if (GetOrientation() == ORIENTATION_VERTICAL)
 	{
-		if (xaih::IsPointInRectangle(static_cast<float>(x), static_cast<float>(y), 
-			static_cast<float>(GetAbsX()), static_cast<float>(GetAbsY()), GetWidth(), GetHeight()))
-		{
-			if (GetOrientation() == ORIENTATION_VERTICAL)
-			{
-				SetValue(static_cast<int>((GetMaxValue() - GetMinValue()) / 
-					static_cast<float>(GetHeight() / static_cast<float>(y - GetAbsY()))));
-			}
-			else
-			{
-				SetValue(static_cast<int>((GetMaxValue() - GetMinValue()) / 
-					static_cast<float>(GetWidth() / static_cast<float>(x - GetAbsX()))));
-			}
-
-			_pressed = true;
-		}
+		SetValue(static_cast<int>((GetMaxValue() - GetMinValue()) / static_cast<float>(GetHeight() / 
+			static_cast<float>(y - GetAbsY()))));
 	}
 	else
 	{
-		_pressed = false;
+		SetValue(static_cast<int>((GetMaxValue() - GetMinValue()) / static_cast<float>(GetWidth() / 
+			static_cast<float>(x - GetAbsX()))));
 	}
+}
 
-	return IsConsumeMouseEvents();
+void Slider::OnValueChangedEvent()
+{
+
 }
 
 };

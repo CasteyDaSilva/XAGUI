@@ -37,9 +37,7 @@ void ProggressBar::Render()
 	{
 		XAGUI::GetRenderer()->Render(XAGUI::GetSkin(), GetAbsX(), GetAbsY(), GetSrcWidth() * 
 			(GetProggress() / 100), GetHeight(), GetSrcX(GetState()), GetSrcY(GetState()), 
-			GetSrcWidth() * (GetProggress() / 100), GetSrcHeight(), GetRed(GetState()), 
-			GetGreen(GetState()), GetBlue(GetState()), GetAlpha(GetState()));
-
+			GetSrcWidth() * (GetProggress() / 100), GetSrcHeight(), GetColor(GetState()));
 		Control::Render();
 	}
 }

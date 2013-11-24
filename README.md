@@ -1,7 +1,7 @@
 Xandev's Awesome Graphical User Interface
 ====
 
-XAGUI is an Open Source, multi-platform* GUI library written in C++.
+XAGUI is an Open Source, multi-platform GUI library written in C++ and based on SDL2.
 
 Available Controls:
 - Label
@@ -21,5 +21,3 @@ Features:
 - Open Source
 - Multi-platform
 - Wiki Documentation
-
-*Multi-platform - when renderer support it. XAGUI originally was written based on SDL2.

@@ -117,9 +117,8 @@ void Button::Render()
 	if (IsVisible())
 	{
 		XAGUI::GetRenderer()->Render(XAGUI::GetSkin(), GetAbsX(), GetAbsY(), GetWidth(), GetHeight(), 
-			GetSrcX(GetState()), GetSrcY(GetState()), GetSrcWidth(), GetSrcHeight(), GetRed(GetState()), 
-			GetGreen(GetState()), GetBlue(GetState()), GetAlpha(GetState()));
-
+			GetSrcX(GetState()), GetSrcY(GetState()), GetSrcWidth(), GetSrcHeight(), 
+			GetColor(GetState()));
 		Control::Render();
 	}
 }

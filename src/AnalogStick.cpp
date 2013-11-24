@@ -111,8 +111,7 @@ void AnalogStick::Render()
 
 		XAGUI::GetRenderer()->Render(XAGUI::GetSkin(), _stickX, _stickY, GetWidth(), 
 			GetHeight(), GetStickSrcX(GetState()), GetStickSrcY(GetState()), GetSrcWidth(), 
-			GetSrcHeight(), GetRed(GetState()), GetGreen(GetState()), GetBlue(GetState()), 
-			GetAlpha(GetState()));
+			GetSrcHeight(), GetColor(GetState()));
 	}
 }
 
@@ -127,17 +126,17 @@ void AnalogStick::SetStickX(sint stickX)
 	if (stickX < GetAbsX() - ceil(GetWidth() / 4.0f))
 	{
 		_stickX = GetAbsX() - static_cast<sint>(ceil(GetWidth() / 4.0f));
-		_valueX = -1.0f;
+		SetValueX(-1.0f);
 	}
 	else if (stickX > GetAbsX() + ceil(GetWidth() / 4.0f))
 	{
 		_stickX = GetAbsX() + static_cast<sint>(ceil(GetWidth() / 4.0f));
-		_valueX = 1.0f;
+		SetValueX(1.0f);
 	}
 	else 
 	{
 		_stickX = stickX;
-		_valueX = (GetStickX() - GetAbsX()) / xaih::Round((GetWidth() / 4.0f));
+		SetValueX((GetStickX() - GetAbsX()) / xaih::Round((GetWidth() / 4.0f)));
 	}
 }
 
@@ -146,23 +145,36 @@ void AnalogStick::SetStickY(sint stickY)
 	if (stickY < GetAbsY() - ceil(GetHeight() / 4.0f))
 	{
 		_stickY = GetAbsY() - static_cast<sint>(ceil(GetHeight() / 4.0f));
-		_valueY = 1.0f;
+		SetValueY(1.0f);
 	}
 	else if (stickY > GetAbsY() + ceil(GetHeight() / 4.0f))
 	{
 		_stickY = GetAbsY() + static_cast<sint>(ceil(GetHeight() / 4.0f));
-		_valueY = -1.0f;
+		SetValueY(-1.0f);
 	}
 	else 
 	{
 		_stickY = stickY;
-		_valueY = -(GetStickY() - GetAbsY()) / xaih::Round((GetHeight() / 4.0f));
+		SetValueY(-(GetStickY() - GetAbsY()) / xaih::Round((GetHeight() / 4.0f)));
 	}
 }
 
-void AnalogStick::MouseMoveEvent(int x, int y)
+void AnalogStick::SetValueX(float valueX)
 {
-	if (_pressed)
+	_valueX = valueX;
+	(onValueChanged != 0) ? onValueChanged(this) : OnValueChangedEvent();
+}
+void
+	AnalogStick::SetValueY(float valueY)
+{
+	_valueY = valueY;
+	(onValueChanged != 0) ? onValueChanged(this) : OnValueChangedEvent();
+}
+
+Control* AnalogStick::MouseMoveEvent(int x, int y)
+{
+	Control* control = Control::MouseMoveEvent(x, y);
+	if (IsPressed())
 	{
 		if (x < GetAbsX() + GetWidth() / 2)
 		{
@@ -182,43 +194,45 @@ void AnalogStick::MouseMoveEvent(int x, int y)
 			SetStickY(y - GetHeight() / 2);
 		}
 	}
+	return control;
 }
 
-bool AnalogStick::MouseButtonEvent(int x, int y, MouseButton button, bool down)
+Control* AnalogStick::MouseButtonDownEvent(int x, int y, uchar button)
 {
-	if (button == MOUSE_BUTTON_LEFT && down)
+	Control* control = Control::MouseButtonDownEvent(x, y, button);
+	if (control == this)
 	{
-		if (xaih::IsPointInRectangle(static_cast<float>(x), static_cast<float>(y), 
-			static_cast<float>(GetAbsX()), static_cast<float>(GetAbsY()), GetWidth(), GetHeight()))
+		if (x < GetAbsX() + GetWidth() / 2)
 		{
-			if (x < GetAbsX() + GetWidth() / 2)
-			{
-				SetStickX(x - GetWidth() / 2);
-			}
-			else
-			{
-				SetStickX(x - GetWidth() / 2);
-			}
+			SetStickX(x - GetWidth() / 2);
+		}
+		else
+		{
+			SetStickX(x - GetWidth() / 2);
+		}
 
-			if (y < GetAbsY() + GetHeight() / 2)
-			{
-				SetStickY(y - GetHeight() / 2);
-			}
-			else
-			{
-				SetStickY(y - GetHeight() / 2);
-			}
-
-			_pressed = true;
+		if (y < GetAbsY() + GetHeight() / 2)
+		{
+			SetStickY(y - GetHeight() / 2);
+		}
+		else
+		{
+			SetStickY(y - GetHeight() / 2);
 		}
 	}
-	else
-	{
-		_pressed = false;
-		ResetStick();
-	}
+	return control;
+}
 
-	return IsConsumeMouseEvents();
+void AnalogStick::MouseButtonUpEvent(int x, int y, uchar button)
+{
+	Control::MouseButtonUpEvent(x, y, button);
+	if (button == SDL_BUTTON_LEFT)
+		ResetStick();
+}
+
+void AnalogStick::OnValueChangedEvent()
+{
+
 }
 
 };

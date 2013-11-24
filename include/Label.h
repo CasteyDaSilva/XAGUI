@@ -57,7 +57,7 @@ class Label : public Control
 		 * @param size Size of font.
 		 * @param text Text to display.
 		 */
-		virtual void SetText(cchar* file, uchar size, cchar* text);
+		virtual void SetText(cchar* file, usint size, cchar* text);
 		
 		/**
 		 * Sets width of label to text width.
@@ -80,6 +80,8 @@ class Label : public Control
 		 * @param alpha Value for alpha channel of color.
 		 */
 		virtual void SetColor(ControlState controlState, uchar red, uchar green, uchar blue, uchar alpha);
+		
+		virtual void SetColor(ControlState controlState, SDL_Color color);
 
 	protected:
 

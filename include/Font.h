@@ -20,7 +20,11 @@ class Font
 		 * @param file Path to font file.
 		 * @param size Size of font.
 		 */
-		virtual bool Load(cchar* file, uchar size);
+		virtual bool Load(cchar* file, usint size);
+		
+		virtual void Release();
+
+		inline TTF_Font* Get() const { return _font; }
 
 		/**
 		 * Returns path to font file.
@@ -32,26 +36,27 @@ class Font
 		 * Returns size of font.
 		 * @return Size of font.
 		 */
-		virtual inline uchar GetSize() const { return _size; }
+		virtual inline usint GetSize() const { return _size; }
 
 		/**
 		 * Measures text width.
 		 * @param text Text to be measured.
 		 * @return Text width.
 		 */
-		virtual usint GetTextWidth(cchar* text) const = 0;
+		virtual int GetTextWidth(cchar* text) const;
 
 		/**
 		 * Measures text height.
 		 * @param text Text to be measured.
 		 * @return Text height.
 		 */
-		virtual usint GetTextHeight(cchar* text) const = 0;
+		virtual int GetTextHeight(cchar* text) const;
 
 	protected:
 
+		TTF_Font* _font;
 		std::string _file;
-		uchar _size;
+		usint _size;
 };
 
 #endif

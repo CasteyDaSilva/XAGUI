@@ -7,10 +7,10 @@ OnControlCreation Control::onControlCreation;
 Control* Control::_focusedControl = 0;
 
 Control::Control()
-	: _state(CONTROL_STATE_NORMAL), _x(0), _y(0), _width(0), _height(0), _center(false), _visible(true), 
-	_consumeMouseEvents(false), _consumeKeyboardEvents(false), _parent(0)
+	: _x(0), _y(0), _width(0), _height(0), _alignment(ALIGNMENT_TOP_LEFT), _state(CONTROL_STATE_NORMAL),
+	_visible(true), _consumeMouseEvents(false), _consumeKeyboardEvents(false), _parent(0)
 {
-	for (uchar i = 0; i < CONTROL_STATE_COUNT; i++)
+	for (uchar i = 0; i < CONTROL_STATE_COUNT; i++) 
 		SetColor(static_cast<ControlState>(i), 255, 255, 255, 255);
 }
 
@@ -23,31 +23,26 @@ void Control::ReadProperties(tinyxml2::XMLElement* element)
 {
 	std::string string;
 
-	if (strcmp(element->Name(), "form") != 0)
-		_type = element->Attribute("type");
-
-	SetID(element->Attribute("id"));
-
 	cchar* cstring = element->Attribute("w");
 	if (cstring != 0)
 	{
 		string = cstring;
-		if (string.compare("AUTO") == 0)
-		{
-			SetAutoWidth();
+		if (string.compare("AUTO") == 0) 
+		{ 
+			SetAutoWidth(); 
 		}
-		else if (*string.rbegin() == 'p')
-		{
-			SetPermilWidth(xaih::StrToUInt(xaih::ParseString(string, "p").c_str()));
+		else if (*string.rbegin() == 'r')
+		{ 
+			SetRatioWidth(xaih::StrToDouble(xaih::ParseString(string, "r").c_str())); 
 		}
-		else
-		{
-			SetWidth(xaih::StrToUInt(string.c_str()));
+		else 
+		{ 
+			SetWidth(xaih::StrToUInt(string.c_str())); 
 		}
 	}
 	else
-	{
-		SetWidth(0);
+	{ 
+		SetWidth(0); 
 	}
 
 	cstring = element->Attribute("h");
@@ -58,9 +53,9 @@ void Control::ReadProperties(tinyxml2::XMLElement* element)
 		{
 			SetAutoHeight();
 		}
-		else if (*string.rbegin() == 'p')
+		else if (*string.rbegin() == 'r')
 		{
-			SetPermilHeight(xaih::StrToUInt(xaih::ParseString(string, "p").c_str()));
+			SetRatioHeight(xaih::StrToDouble(xaih::ParseString(string, "r").c_str()));
 		}
 		else
 		{
@@ -72,26 +67,93 @@ void Control::ReadProperties(tinyxml2::XMLElement* element)
 		SetHeight(0);
 	}
 
-	_center = element->BoolAttribute("center");
+	cstring = element->Attribute("x");
+	if (cstring != 0)
+	{
+		string = cstring;
+		if (*string.rbegin() == 'r')
+		{
+			SetRatioX(xaih::StrToDouble(xaih::ParseString(string, "r").c_str()));
+		}
+		else
+		{
+			SetX(xaih::StrToInt(string.c_str()));
+		}
+	}
 
-	string = element->Attribute("x");
-	if (*string.rbegin() == 'p')
+	cstring = element->Attribute("y");
+	if (cstring != 0)
 	{
-		SetPermilX(xaih::StrToInt(xaih::ParseString(string, "p").c_str()), _center);
-	}
-	else
-	{
-		SetX(xaih::StrToInt(string.c_str()));
+		string = cstring;
+		if (*string.rbegin() == 'r')
+		{
+			SetRatioY(xaih::StrToDouble(xaih::ParseString(string, "r").c_str()));
+		}
+		else
+		{
+			SetY(xaih::StrToInt(string.c_str()));
+		}
 	}
 
-	string = element->Attribute("y");
-	if (*string.rbegin() == 'p')
+	cstring = element->Attribute("align");
+	if (cstring != 0)
 	{
-		SetPermilY(xaih::StrToInt(xaih::ParseString(string, "p").c_str()), _center);
-	}
-	else
-	{
-		SetY(xaih::StrToInt(string.c_str()));
+		if (strcmp(cstring, "LEFT") == 0)
+		{
+			SetAlignment(ALIGNMENT_LEFT);
+		}
+		else if (strcmp(cstring, "HCENTER") == 0)
+		{
+			SetAlignment(ALIGNMENT_HCENTER);
+		}
+		else if (strcmp(cstring, "TOP") == 0)
+		{
+			SetAlignment(ALIGNMENT_TOP);
+		}
+		else if (strcmp(cstring, "VCENTER") == 0)
+		{
+			SetAlignment(ALIGNMENT_VCENTER);
+		}
+		else if (strcmp(cstring, "BOTTOM") == 0)
+		{
+			SetAlignment(ALIGNMENT_BOTTOM);
+		}
+		else if (strcmp(cstring, "TOP_LEFT") == 0)
+		{
+			SetAlignment(ALIGNMENT_TOP_LEFT);
+		}
+		else if (strcmp(cstring, "VCENTER_LEFT") == 0)
+		{
+			SetAlignment(ALIGNMENT_VCENTER_LEFT);
+		}
+		else if (strcmp(cstring, "BOTTOM_LEFT") == 0)
+		{
+			SetAlignment(ALIGNMENT_BOTTOM_LEFT);
+		}
+		else if (strcmp(cstring, "TOP_HCENTER") == 0)
+		{
+			SetAlignment(ALIGNMENT_TOP_HCENTER);
+		}
+		else if (strcmp(cstring, "VCENTER_HCENTER") == 0)
+		{
+			SetAlignment(ALIGNMENT_VCENTER_HCENTER);
+		}
+		else if (strcmp(cstring, "BOTTOM_HCENTER") == 0)
+		{
+			SetAlignment(ALIGNMENT_BOTTOM_HCENTER);
+		}
+		else if (strcmp(cstring, "TOP_RIGHT") == 0)
+		{
+			SetAlignment(ALIGNMENT_TOP_RIGHT);
+		}
+		else if (strcmp(cstring, "VCENTER_RIGHT") == 0)
+		{
+			SetAlignment(ALIGNMENT_VCENTER_RIGHT);
+		}
+		else if (strcmp(cstring, "BOTTOM_RIGHT") == 0)
+		{
+			SetAlignment(ALIGNMENT_BOTTOM_RIGHT);
+		}
 	}
 
 	cstring = element->Attribute("color");
@@ -153,6 +215,8 @@ void Control::ReadProperties(tinyxml2::XMLElement* element)
 	cstring = element->Attribute("consumeKeyboardEvents");
 	if (cstring != 0)
 		SetConsumeKeyboardEvents(xaih::StrToBool(cstring));
+
+	ControlBase::ReadProperties(element);
 }
 
 void Control::ParseChildren(tinyxml2::XMLElement* element)
@@ -242,48 +306,149 @@ void Control::RemoveAllChildren()
 
 void Control::DeleteAllChildren()
 {
-	for (uint i = 0; i < _children.size(); i++)
+	for (uint i = 0; i < GetChildrenCount(); i++)
 	{
-		if (_children[i] == GetFocusedControl())
+		if (GetChild(i) == GetFocusedControl())
 			SetFocusedControl(0);
 
 		SAFE_DELETE(_children[i]);
 	}
-	_children.clear();
+
+	RemoveAllChildren();
 }
 
 void Control::Render()
 {
-	for (uint i = 0; i < _children.size(); i++)
-		_children[i]->Render();
+	for (uint i = 0; i < GetChildrenCount(); i++)
+		GetChild(i)->Render();
+}
+
+void Control::MoveChildToFront(Control* control)
+{
+	for (uint i = 0; i < GetChildrenCount(); i++)
+	{
+		if (GetChild(i) == control)
+		{
+			uint dst = GetChildrenCount();
+			const size_t finalDst = dst > i ? dst - 1 : dst;
+
+			std::vector<Control*> tmp(_children.begin() + i, _children.begin() + i + 1);
+			_children.erase(_children.begin() + i, _children.begin() + i + 1);
+			_children.insert(_children.begin() + finalDst, tmp.begin(), tmp.end());
+
+			break;
+		}
+	}
+}
+
+void Control::MoveToFront()
+{
+	Control* child = this;
+	Control* parent = GetParent();
+
+	while (parent != 0)
+	{
+		parent->MoveChildToFront(child);
+		
+		child = parent;
+		parent = parent->GetParent();
+	}
+}
+
+sint Control::GetAlignmentX() const
+{
+	if (GetAlignment() & ALIGNMENT_HCENTER)
+	{
+		if (GetParent() != 0) 
+		{
+			return static_cast<sint>((GetParent()->GetWidth() - GetWidth()) / 2.0f);
+		}
+		else
+		{
+			return static_cast<sint>((XAGUI::GetRenderer()->GetBackBufferWidth() - GetWidth()) / 2.0f);
+		}
+	}
+	else if (GetAlignment() & ALIGNMENT_RIGHT) 
+	{
+		if (GetParent() != 0) 
+		{
+			return GetParent()->GetWidth() - GetWidth();
+		}
+		else
+		{
+			return XAGUI::GetRenderer()->GetBackBufferWidth() - GetWidth();
+		}
+	}
+
+	// ALIGNMENT_LEFT
+	return 0;
+}
+
+sint Control::GetAlignmentY() const
+{
+	if (GetAlignment() & ALIGNMENT_VCENTER)
+	{
+		if (GetParent() != 0) 
+		{
+			return static_cast<sint>((GetParent()->GetHeight() - GetHeight()) / 2.0f);
+		}
+		else
+		{
+			return static_cast<sint>((XAGUI::GetRenderer()->GetBackBufferHeight() - GetHeight()) / 2.0f);
+		}
+	}
+	else if (GetAlignment() & ALIGNMENT_BOTTOM) 
+	{
+		if (GetParent() != 0) 
+		{
+			return GetParent()->GetHeight() - GetHeight();
+		}
+		else
+		{
+			return XAGUI::GetRenderer()->GetBackBufferHeight() - GetHeight();
+		}
+	}
+
+	// ALIGNMENT_TOP
+	return 0;
 }
 
 sint Control::GetAbsX() const
 {
-	if (GetParent() != 0)
-		return GetParent()->GetAbsX() + GetX();
-	
-	return GetX();
+	if (GetParent() != 0) 
+	{
+		return GetParent()->GetAbsX() + GetAlignmentX() + GetX();
+	}
+	else 
+	{
+		return GetAlignmentX() + GetX();
+	}
 }
 
 sint Control::GetAbsY() const
 {
-	if (GetParent() != 0) return (GetParent()->GetAbsY() + GetY());
-	return GetX();
+	if (GetParent() != 0) 
+	{
+		return GetParent()->GetAbsY() + GetAlignmentY() + GetY();
+	}
+	else 
+	{
+		return GetAlignmentY() + GetY();
+	}
 }
 
 Control* Control::GetChild(cchar* id) const
 {
 	Control* child;
-	for (uint i = 0; i < _children.size(); i++)
+	for (uint i = 0; i < GetChildrenCount(); i++)
 	{
-		if (strcmp(_children[i]->GetID(), id) == 0)
+		if (strcmp(GetChild(i)->GetID(), id) == 0)
 		{
-			return _children[i];
+			return GetChild(i);
 		}
 		else
 		{
-			child = _children[i]->GetChild(id);
+			child = GetChild(i)->GetChild(id);
 			if (child != 0) return child;
 		}
 	}
@@ -292,77 +457,60 @@ Control* Control::GetChild(cchar* id) const
 
 void Control::SetState(ControlState state)
 {
-	_state = state;
-
-	if (onControlStateChanged != 0)
+	if (GetState() != state)
 	{
-		onControlStateChanged(this, state);
-	}
-	else
-	{
-		OnControlStateChangedEvent(state);
-	}
-}
+		_state = state;
 
-void Control::SetX(sint x)
-{
-	_x = x;
-
-	if (IsCentered())
-	{
-		_x = x - static_cast<sint>(GetWidth() / 2.0f);
+		if (onControlStateChanged != 0)
+		{
+			onControlStateChanged(this);
+		}
+		else
+		{
+			OnControlStateChangedEvent();
+		}
 	}
 }
 
-void Control::SetPermilX(sint permil, bool center)
+void Control::SetRatioX(double ratio)
 {
 	if (GetParent() == 0)
 	{
-		SetX(static_cast<sint>(XAGUI::GetRenderer()->GetBackBufferWidth() * (permil / 1000.0f)));
+		SetX(static_cast<sint>(xaih::Round(XAGUI::GetRenderer()->GetBackBufferWidth() * ratio)));
 	}
 	else
 	{
-		SetX(static_cast<sint>(_parent->GetWidth() * (permil / 1000.0f)));
+		SetX(static_cast<sint>(xaih::Round(GetParent()->GetWidth() * ratio)));
 	}
 }
 
-void Control::SetY(sint y)
-{
-	_y = y;
-
-	if (IsCentered())
-		_y = y - static_cast<sint>(GetHeight() / 2.0f);
-}
-
-void Control::SetPermilY(sint permil, bool center)
+void Control::SetRatioY(double ratio)
 {
 	if (GetParent() == 0)
 	{
-		SetY(static_cast<sint>(XAGUI::GetRenderer()->GetBackBufferHeight() * (permil / 1000.0f)));
+		SetY(static_cast<sint>(xaih::Round(XAGUI::GetRenderer()->GetBackBufferHeight() * ratio)));
 	}
 	else
 	{
-		SetY(static_cast<sint>(_parent->GetHeight() * (permil / 1000.0f)));
+		SetY(static_cast<sint>(xaih::Round(GetParent()->GetHeight() * ratio)));
 	}
 }
 
 void Control::SetWidth(usint width)
 {
-	usint tempWidth = GetWidth();
 	_width = width;
-	if (IsCentered())
+}
+
+void Control::SetRatioWidth(double ratio)
+{
+	if (GetParent() == 0)
 	{
-		SetX(GetX() + static_cast<sint>(tempWidth / 2.0f));
+		SetWidth(static_cast<usint>(xaih::Round(XAGUI::GetRenderer()->GetBackBufferWidth() * ratio)));
 	}
 	else
 	{
-		SetX(GetX());
+		SetWidth(static_cast<usint>(xaih::Round(GetParent()->GetWidth() * ratio)));
 	}
-}
-
-void Control::SetPermilWidth(usint permil)
-{
-	SetWidth(static_cast<usint>(XAGUI::GetRenderer()->GetBackBufferWidth() * (permil / 1000.0f)));
 }
 
 void Control::SetAutoWidth()
@@ -373,27 +521,25 @@ void Control::SetAutoWidth()
 	}
 	else
 	{
-		SetWidth(_parent->GetWidth());
+		SetWidth(GetParent()->GetWidth());
 	}
 }
 
 void Control::SetHeight(usint height)
 {
-	usint tempHeight = GetHeight();
 	_height = height;
-	if (IsCentered())
+}
+
+void Control::SetRatioHeight(double ratio)
+{
+	if (GetParent() == 0)
 	{
-		SetY(GetY() + static_cast<sint>(tempHeight / 2.0f));
+		SetHeight(static_cast<usint>(xaih::Round(XAGUI::GetRenderer()->GetBackBufferHeight() * ratio)));
 	}
 	else
 	{
-		SetY(GetY());
+		SetHeight(static_cast<usint>(xaih::Round(GetParent()->GetHeight() * ratio)));
 	}
-}
-
-void Control::SetPermilHeight(usint permil)
-{
-	SetHeight(static_cast<usint>(XAGUI::GetRenderer()->GetBackBufferHeight() * (permil / 1000.0f)));
 }
 
 void Control::SetAutoHeight()
@@ -404,16 +550,21 @@ void Control::SetAutoHeight()
 	}
 	else
 	{
-		SetHeight(_parent->GetHeight());
+		SetHeight(GetParent()->GetHeight());
 	}
 }
 
 void Control::SetColor(ControlState controlState, uchar red, uchar green, uchar blue, uchar alpha)
 {
-	_red[controlState] = red;
-	_green[controlState] = green;
-	_blue[controlState] = blue;
-	_alpha[controlState] = alpha;
+	_color[controlState].r = red;
+	_color[controlState].g = green;
+	_color[controlState].b = blue;
+	_color[controlState].a = alpha;
+}
+
+void Control::SetColor(ControlState controlState, SDL_Color color)
+{
+	SetColor(controlState, color.r, color.g, color.b, color.a);
 }
 
 void Control::SetFocusedControl(Control* control)
@@ -428,106 +579,206 @@ void Control::SetFocusedControl(Control* control)
 			}
 			else
 			{
-				GetFocusedControl()->OnLostFocus();
+				GetFocusedControl()->OnLostFocusEvent();
 			}
 		}
 	
 		_focusedControl = control;
 
 		if (control != 0)
-			(control->onGetFocus != 0) ? control->onGetFocus(control) : control->OnGetFocus();
+			(control->onGotFocus != 0) ? control->onGotFocus(control) : control->OnGotFocusEvent();
 	}
 }
 
-void Control::MouseMoveEvent(int x, int y)
-{
-	(onMouseMove != 0) ? onMouseMove(this, x, y) : OnMouseMoveEvent(x, y);
-}
-
-bool Control::MouseButtonEvent(int x, int y, MouseButton button, bool down)
-{
-	if (onMouseButton != 0) 
-	{
-		onMouseButton(this, x, y, button, down);
-	}
-	else
-	{
-		OnMouseButtonEvent(x, y, button, down);
-	}
-
-	return IsConsumeMouseEvents();
-}
-
-bool Control::MouseEvent(int x, int y, MouseButton button, bool down)
+Control* Control::MouseMoveEvent(int x, int y)
 {
 	if (IsVisible() && !IsDisabled())
 	{
-		for (uint i = 0; i < _children.size(); i++)
+		Control* control = 0;
+
+		// The last control on the list is the most on top.
+		for (uint i = GetChildrenCount(); i > 0; i--)
 		{
-			if (_children[i]->MouseEvent(x, y, button, down)) return true;
+			// Search for child controls that consume this event.
+			control = GetChild(i - 1)->MouseMoveEvent(x, y);
+
+			// Check if we found it, if yes then return this child.
+			//if (control != 0) return control;
 		}
 
-		if (xaih::IsPointInRectangle(static_cast<float>(x), static_cast<float>(y), 
-			static_cast<float>(GetAbsX()), static_cast<float>(GetAbsY()), GetWidth(), GetHeight()))
+		if (GetState() == CONTROL_STATE_ACTIVE)
+		{
+			// Consumed by 'this' control!
+			control = this;
+		}
+		else if (xaih::IsPointInRectangle(x, y, GetAbsX(), GetAbsY(), GetWidth(), GetHeight()))
 		{
 			if (GetState() == CONTROL_STATE_NORMAL)
 			{
 				SetState(CONTROL_STATE_HOVER);
+
+				// Consumed by 'this' control!
+				control = this;
 			}
-			else if (GetState() == CONTROL_STATE_HOVER && button == MOUSE_BUTTON_LEFT && down)
+			else if (GetState() == CONTROL_STATE_HOVER)
 			{
-				SetState(CONTROL_STATE_ACTIVE);
-				SetFocusedControl(this);
-				return true;
-			}
-			else if (GetState() == CONTROL_STATE_ACTIVE)
-			{
-				if (button == MOUSE_BUTTON_LEFT && !down)
-				{
-					SetState(CONTROL_STATE_HOVER);
-					(onClick != 0) ? onClick(this) : OnClickEvent();
-				}
-				return true;
+				// Consumed by 'this' control!
+				control = this;
 			}
 		}
 		else
 		{
 			SetState(CONTROL_STATE_NORMAL);
 		}
+		
+
+		(onMouseMove != 0) ? onMouseMove(this, x, y) : OnMouseMoveEvent(x, y);	
+
+		return control;
 	}
-	
+
+	// Not consumed, due to invisible control or disabled.
+	return 0;
+}
+
+Control* Control::MouseButtonDownEvent(int x, int y, uchar button)
+{
+	if (IsVisible() && !IsDisabled())
+	{
+		Control* control = 0;
+
+		// The last control on the list is the most on top.
+		for (uint i = GetChildrenCount(); i > 0; i--)
+		{
+			// Search for child controls that consume this event.
+			control = GetChild(i - 1)->MouseButtonDownEvent(x, y, button);
+
+			// Check if we found it, if yes then return this child.
+			if (control != 0) return control;
+		}
+
+		if (GetState() == CONTROL_STATE_HOVER)
+		{
+			if (button == SDL_BUTTON_LEFT)
+			{
+				SetState(CONTROL_STATE_ACTIVE);
+                SetFocusedControl(this);
+				MoveToFront();
+
+				// Consumed by 'this' control!
+				control = this;
+			}
+
+			if (onMouseButtonDown != 0) 
+			{
+				onMouseButtonDown(this, x, y, button);
+			}
+			else
+			{
+				OnMouseButtonDownEvent(x, y, button);
+			}
+
+			return control;
+		}
+	}
+
+	// Not consumed, due to invisible control or disabled.
+	return 0;
+}
+
+void Control::MouseButtonUpEvent(int x, int y, uchar button)
+{
+	// The last control on the list is the most on top.
+	for (uint i = GetChildrenCount(); i > 0; i--)
+		GetChild(i - 1)->MouseButtonUpEvent(x, y, button);
+
+	if (GetState() == CONTROL_STATE_ACTIVE && button == SDL_BUTTON_LEFT)
+	{
+		if (xaih::IsPointInRectangle(x, y, GetAbsX(), GetAbsY(), GetWidth(), GetHeight()))
+		{
+			SetState(CONTROL_STATE_HOVER);
+			(onClick != 0) ? onClick(this) : OnClickEvent();
+		}
+		else
+		{
+			SetState(CONTROL_STATE_NORMAL);
+		}
+    }
+
+	if (onMouseButtonUp != 0) 
+	{
+		onMouseButtonUp(this, x, y, button);
+	}
+	else
+	{
+		OnMouseButtonUpEvent(x, y, button);
+	}
+}
+
+bool Control::KeyDownEvent(SDL_Scancode key)
+{
+	if (GetFocusedControl() != 0 && GetFocusedControl() != this)
+	{
+		if (GetFocusedControl()->onKeyDown != 0)
+		{
+			GetFocusedControl()->onKeyDown(this, key);
+		}
+		else
+		{
+			GetFocusedControl()->OnKeyDownEvent(key);
+		}
+
+		return Control::IsConsumeKeyboardEvents();
+	}
 	return false;
 }
 
-bool Control::KeyEvent(Key key, bool down)
+bool Control::KeyUpEvent(SDL_Scancode key)
 {
 	if (GetFocusedControl() != 0 && GetFocusedControl() != this)
-		return GetFocusedControl()->KeyEvent(key, down);
+	{
+		if (GetFocusedControl()->onKeyUp != 0)
+		{
+			GetFocusedControl()->onKeyUp(this, key);
+		}
+		else
+		{
+			GetFocusedControl()->OnKeyUpEvent(key);
+		}
 
-	return Control::IsConsumeKeyboardEvents();
+		return Control::IsConsumeKeyboardEvents();
+	}
+	return false;
 }
 
 bool Control::TextInputEvent(std::string text)
 {
 	if (GetFocusedControl() != 0 && GetFocusedControl() != this)
 		return GetFocusedControl()->TextInputEvent(text);
-
-	return Control::IsConsumeKeyboardEvents();
+	return false;
 }
 
 void Control::OnMouseMoveEvent(int x, int y)
 {
-	for (uint i = 0; i < _children.size(); i++)
-		_children[i]->MouseMoveEvent(x, y);
+	
 }
 
-void Control::OnMouseButtonEvent(int x, int y, MouseButton button, bool down)
+void Control::OnMouseButtonDownEvent(int x, int y, uchar button)
 {
-	for (uint i = 0; i < _children.size(); i++)
-		_children[i]->MouseButtonEvent(x, y, button, down);
+	
 }
 
-void Control::OnKeyEvent(Key key, bool down)
+void Control::OnMouseButtonUpEvent(int x, int y, uchar button)
+{
+	
+}
+
+void Control::OnKeyDownEvent(SDL_Scancode key)
+{
+
+}
+
+void Control::OnKeyUpEvent(SDL_Scancode key)
 {
 
 }
@@ -537,17 +788,17 @@ void Control::OnTextInputEvent(std::string text)
 
 }
 
-void Control::OnControlStateChangedEvent(ControlState state)
+void Control::OnControlStateChangedEvent()
 {
 
 }
 
-void Control::OnGetFocus()
+void Control::OnGotFocusEvent()
 {
 
 }
 
-void Control::OnLostFocus()
+void Control::OnLostFocusEvent()
 {
 
 }
@@ -556,5 +807,6 @@ void Control::OnClickEvent()
 {
 
 }
+
 
 };

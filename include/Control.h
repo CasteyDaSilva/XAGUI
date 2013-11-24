@@ -5,14 +5,17 @@ class Control;
 
 typedef fastdelegate::FastDelegate2<cchar*, Control*, void> OnControlCreation;
 typedef fastdelegate::FastDelegate3<Control*, int, int, void> OnMouseMove;
-typedef fastdelegate::FastDelegate5<Control*, int, int, MouseButton, bool, void> OnMouseButton;
-typedef fastdelegate::FastDelegate3<Control*, Key, bool, void> OnKey;
+typedef fastdelegate::FastDelegate4<Control*, int, int, uchar, void> OnMouseButtonDown;
+typedef fastdelegate::FastDelegate4<Control*, int, int, uchar, void> OnMouseButtonUp;
+typedef fastdelegate::FastDelegate2<Control*, SDL_Scancode, void> OnKeyDown;
+typedef fastdelegate::FastDelegate2<Control*, SDL_Scancode, void> OnKeyUp;
 typedef fastdelegate::FastDelegate2<Control*, std::string, void> OnTextInput;
-typedef fastdelegate::FastDelegate2<Control*, ControlState, void> OnControlStateChanged;
+typedef fastdelegate::FastDelegate1<Control*, void> OnControlStateChanged;
 typedef fastdelegate::FastDelegate1<Control*, void> OnFocus;
 typedef fastdelegate::FastDelegate1<Control*, void> OnClick;
+typedef fastdelegate::FastDelegate1<Control*, void> OnValueChanged;
 
-class Control
+class Control : public ControlBase
 {
 	public:
 
@@ -70,6 +73,17 @@ class Control
 		virtual inline void Hide() { SetVisible(false); }
 
 		/**
+		 * Moves specified child control to front.
+		 * @param control Control to be moved to front.
+		 */
+		virtual void MoveChildToFront(Control* control);
+		
+		/**
+		 * Moves control to front.
+		 */
+		virtual void MoveToFront();
+
+		/**
 		 * Returns true if control is hovered, false if not.
 		 * @return Whether control is hovered.
 		 */
@@ -89,12 +103,6 @@ class Control
 		 */
 		virtual inline bool IsDisabled() const
 		{ return (GetState() == CONTROL_STATE_DISABLED) ? true : false; }
-		
-		/**
-		 * Returns true if control is centered, false if not.
-		 * @return Whether control is centered.
-		 */
-		virtual inline bool IsCentered() const { return _center; }
 		
 		/**
 		 * Returns true if control is visible, false if not.
@@ -120,33 +128,13 @@ class Control
 		 */
 		virtual inline bool IsFocused() const { return (Control::GetFocusedControl() == this); }
 
-		/**
-		 * Returns control state.
-		 * @return Control state.
-		 */
-		virtual inline ControlState GetState() const { return _state; }
-
-		/**
-		 * Returns control's parent.
-		 * @return Control's parent.
-		 */
-		virtual inline Control* GetParent() const { return _parent; }
-
-		/**
-		 * Returns control's id.
-		 * @return Control's id.
-		 */
-		virtual inline cchar* GetID() const { return _id.c_str(); }
-
-		/**
-		 * Returns control's type.
-		 * @return Control's type.
-		 */
-		virtual inline cchar* GetType() const { return _type.c_str(); }
-
 		virtual inline sint GetX() const { return _x; }
 
 		virtual inline sint GetY() const { return _y; }
+
+		virtual sint GetAlignmentX() const;
+		
+		virtual sint GetAlignmentY() const;
 
 		virtual sint GetAbsX() const;
 
@@ -156,45 +144,58 @@ class Control
 
 		virtual inline usint GetHeight() const { return _height; }
 
-		virtual inline uchar GetRed(ControlState controlState) const { return _red[controlState]; }
+		virtual inline Alignment GetAlignment() const { return _alignment; }
 
-		virtual inline uchar GetGreen(ControlState controlState) const { return _green[controlState]; }
+		/**
+		 * Returns control state.
+		 * @return Control state.
+		 */
+		virtual inline ControlState GetState() const { return _state; }
 
-		virtual inline uchar GetBlue(ControlState controlState) const { return _blue[controlState]; }
+		virtual inline SDL_Color GetColor(ControlState controlState) const 
+		{ return _color[controlState]; }
 
-		virtual inline uchar GetAlpha(ControlState controlState) const { return _alpha[controlState]; }
+		/**
+		 * Returns control's parent.
+		 * @return Control's parent.
+		 */
+		virtual inline Control* GetParent() const { return _parent; }
 
 		virtual Control* GetChild(cchar* id) const;
+		
+		virtual Control* GetChild(uint i) const { return _children[i]; }
+
+		virtual uint GetChildrenCount() const { return _children.size(); }
 
 		static inline Control* GetFocusedControl() { return _focusedControl; }
 
-		virtual void SetState(ControlState state);
+		virtual inline void SetX(sint x) { _x = x; }
 
-		virtual inline void SetParent(Control* parent) { _parent = parent; }
+		virtual void SetRatioX(double ratio);
 
-		virtual inline void SetID(cchar* id) { _id = id; }
+		virtual inline void SetY(sint y) { _y = y; }
 
-		virtual void SetX(sint x);
-
-		virtual void SetPermilX(sint permil, bool center = false);
-
-		virtual void SetY(sint y);
-
-		virtual void SetPermilY(sint permil, bool center = false);
+		virtual void SetRatioY(double ratio);
 
 		virtual void SetWidth(usint width);
 
-		virtual void SetPermilWidth(usint permil);
+		virtual void SetRatioWidth(double ratio);
 
 		virtual void SetAutoWidth();
 		
 		virtual void SetHeight(usint height);
 
-		virtual void SetPermilHeight(usint permil);
+		virtual void SetRatioHeight(double ratio);
 
 		virtual void SetAutoHeight();
+		
+		virtual void SetAlignment(Alignment alignment) { _alignment = alignment; }
+
+		virtual void SetState(ControlState state);
 
 		virtual void SetColor(ControlState controlState, uchar red, uchar green, uchar blue, uchar alpha);
+
+		virtual void SetColor(ControlState controlState, SDL_Color color);
 
 		virtual inline void SetVisible(bool visible) { _visible = visible; }
 
@@ -203,30 +204,42 @@ class Control
 
 		virtual inline void SetConsumeKeyboardEvents(bool consumeKeyboardEvents) 
 		{ _consumeKeyboardEvents = consumeKeyboardEvents; }
+		
+		virtual inline void SetParent(Control* parent) { _parent = parent; }
 
 		static void SetFocusedControl(Control* control);
 
 	public:
 
-		virtual void MouseMoveEvent(int x, int y);
+		virtual Control* MouseMoveEvent(int x, int y);
 
 		/**
 		 * 
 		 * @param x X position of mouse.
 		 * @param y Y position of mouse.
-		 * @param button Pressed/Released mouse button.
-		 * @param down Whether is pressed button.
+		 * @param button Pressed mouse button.
 		 */
-		virtual bool MouseButtonEvent(int x, int y, MouseButton button, bool down);
+		virtual Control* MouseButtonDownEvent(int x, int y, uchar button);
+		
+		/**
+		 * 
+		 * @param x X position of mouse.
+		 * @param y Y position of mouse.
+		 * @param button Released mouse button.
+		 */
+		virtual void MouseButtonUpEvent(int x, int y, uchar button);
 
-		virtual bool MouseEvent(int x, int y, MouseButton button, bool down);
+		/**
+		 * Sends this event to focused control.
+		 * @param key Pressed key.
+		 */
+		virtual bool KeyDownEvent(SDL_Scancode key);
 		
 		/**
 		 * Sends this event to focused control.
-		 * @param key Pressed/Released key.
-		 * @param down Whether is pressed key.
+		 * @param key Released key.
 		 */
-		virtual bool KeyEvent(Key key, bool down);
+		virtual bool KeyUpEvent(SDL_Scancode key);
 
 		/**
 		 * Sends this event to focused control.
@@ -244,20 +257,32 @@ class Control
 		virtual void OnMouseMoveEvent(int x, int y);
 
 		/**
-		 * Called when mouse button is pressed or released.
+		 * Called when mouse button is pressed.
 		 * @param x X position of mouse.
 		 * @param y Y position of mouse.
-		 * @param button Pressed/Released mouse button.
-		 * @param down Whether is pressed button.
+		 * @param button Pressed mouse button.
 		 */
-		virtual void OnMouseButtonEvent(int x, int y, MouseButton button, bool down);
+		virtual void OnMouseButtonDownEvent(int x, int y, uchar button);
 		
 		/**
-		 * Called when key is pressed or released.
-		 * @param key Pressed/Released key.
-		 * @param down Whether is pressed key.
+		 * Called when mouse button is released.
+		 * @param x X position of mouse.
+		 * @param y Y position of mouse.
+		 * @param button Released mouse button.
 		 */
-		virtual void OnKeyEvent(Key key, bool down);
+		virtual void OnMouseButtonUpEvent(int x, int y, uchar button);
+
+		/**
+		 * Called when key is pressed.
+		 * @param key Pressed key.
+		 */
+		virtual void OnKeyDownEvent(SDL_Scancode key);
+		
+		/**
+		 * Called when key is released.
+		 * @param key Released key.
+		 */
+		virtual void OnKeyUpEvent(SDL_Scancode key);
 
 		/**
 		 * Called when text input mode is on.
@@ -269,18 +294,18 @@ class Control
 		 * Called when control state is changed.
 		 * @param state New control state.
 		 */
-		virtual void OnControlStateChangedEvent(ControlState state);
+		virtual void OnControlStateChangedEvent();
 		
 		/**
 		 * Called when control gets focus.
 		 */
-		virtual void OnGetFocus();
+		virtual void OnGotFocusEvent();
 
 		/**
 		 * Called when control lost focus.
 		 */
-		virtual void OnLostFocus();
-		
+		virtual void OnLostFocusEvent();
+
 		/**
 		 * Called when control is clicked.
 		 */
@@ -291,28 +316,24 @@ class Control
 		static OnControlCreation onControlCreation;
 
 		OnMouseMove onMouseMove;
-		OnMouseButton onMouseButton;
-		OnKey onKey;
-		OnTextInput onTextInput;
+		OnMouseButtonDown onMouseButtonDown;
+		OnMouseButtonUp onMouseButtonUp;
+		OnKeyDown onKeyDown;
+		OnKeyUp onKeyUp;
 		OnControlStateChanged onControlStateChanged;
-		OnFocus onGetFocus;
+		OnFocus onGotFocus;
 		OnFocus onLostFocus;
 		OnClick onClick;
 
 	protected:
 
-		ControlState _state;
-		std::string _id;
-		std::string _type;
 		sint _x;
 		sint _y;
 		usint _width;
 		usint _height;
-		uchar _red[CONTROL_STATE_COUNT];
-		uchar _green[CONTROL_STATE_COUNT];
-		uchar _blue[CONTROL_STATE_COUNT]; 
-		uchar _alpha[CONTROL_STATE_COUNT];
-		bool _center;
+		Alignment _alignment;
+		ControlState _state;
+		SDL_Color _color[CONTROL_STATE_COUNT];
 		bool _visible;
 		bool _consumeMouseEvents;
 		bool _consumeKeyboardEvents;

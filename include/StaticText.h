@@ -14,13 +14,16 @@ class StaticText
 		 * Destructor
 		 */
 		virtual ~StaticText();
+		
+		void Release();
 
 		/**
 		 * Returns pointer to font object.
-		 * You need to overload this function with your own return font type.
 		 * @return Pointer to font object.
 		 */
-		virtual Font* GetFont() const = 0;
+		virtual inline Font* GetFont() const { return _font; }
+		
+		inline SDL_Texture* GetTexture() const { return _texture; }
 
 		/**
 		 * Returns text.
@@ -46,12 +49,6 @@ class StaticText
 		 */
 		virtual inline uint GetLength() const { return _text.length(); }
 		
-		/**
-		 * Returns length of text(UTF-8).
-		 * @return Length of text(UTF-8).
-		 */
-		virtual inline uint GetLengthUTF8() const { return utf8::distance(_text.begin(), _text.end()); }
-
 		/**
 		 * Returns value of red channel.
 		 * @return Value of red channel.
@@ -81,13 +78,13 @@ class StaticText
 		 * @param file Path to font file.
 		 * @param size Size of font. -1 for unchanged font size.
 		 */
-		virtual void SetFont(cchar* file, sint size = -1) = 0;
+		virtual void SetFont(cchar* file, sint size = -1);
 
 		/**
 		 * Sets text.
 		 * @param text Text.
 		 */
-		virtual inline void Set(cchar* text) { _text = text; }
+		virtual inline void Set(cchar* text);
 
 		/**
 		 * Sets color of static text.
@@ -100,6 +97,8 @@ class StaticText
 
 	protected:
 
+		Font* _font;
+		SDL_Texture* _texture;
 		std::string _text;
 		uchar _red;
 		uchar _green;

@@ -34,6 +34,13 @@ class Button : public Control
 		virtual void Render();
 
 		/**
+		 * Returns true if button is pressed, false if not.
+		 * @return Whether button is pressed.
+		 */
+		virtual inline bool IsPressed() const
+		{ return IsActive(); }
+
+		/**
 		 * Returns X position of texture region.
 		 * @param controlState State of control for returning.
 		 * @return X position of texture region.

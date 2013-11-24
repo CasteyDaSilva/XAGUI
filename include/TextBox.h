@@ -136,17 +136,15 @@ class TextBox : public Button
 		 * Moves caret to mouse position when mouse button is pressed.
 		 * @param x X position of mouse.
 		 * @param y Y position of mouse.
-		 * @param button Pressed/Released mouse button.
-		 * @param down Whether is pressed button.
+		 * @param button Pressed mouse button.
 		 */
-		virtual bool MouseButtonEvent(int x, int y, MouseButton button, bool down);
+		virtual Control* MouseButtonDownEvent(int x, int y, uchar button);
 		
 		/**
 		 * Does some action due to pressed key.
-		 * @param key Pressed/Released key.
-		 * @param down Whether is pressed key.
+		 * @param key Pressedd key.
 		 */
-		virtual bool KeyEvent(Key key, bool down);
+		virtual void OnKeyDownEvent(SDL_Scancode key);
 
 		/**
 		 * Adds text. It should be called before StartTextInput() and finished by StopTextInput().
@@ -155,6 +153,20 @@ class TextBox : public Button
 		 * @param text Typed text.
 		 */
 		virtual bool TextInputEvent(std::string text);
+
+		/**
+		 * Called when control gets focus.
+		 */
+		virtual void OnGotFocus();
+
+		/**
+		 * Called when control lost focus.
+		 */
+		virtual void OnLostFocus();
+
+	public:
+
+		OnTextInput onTextInput;
 
 	protected:
 

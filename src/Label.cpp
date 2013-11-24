@@ -23,11 +23,11 @@ Label::~Label()
 
 void Label::ReadProperties(tinyxml2::XMLElement* element)
 {
-	uchar fontSize = 0;
+	usint fontSize = 0;
 	std::string string = element->Attribute("fSize");
 	if (*string.rbegin() == '%')
 	{
-		fontSize = static_cast<uchar>(XAGUI::GetRenderer()->GetBackBufferHeight() / 8.0f * 
+		fontSize = static_cast<usint>(XAGUI::GetRenderer()->GetBackBufferHeight() / 7.0f * 
 			(xaih::StrToUInt(xaih::ParseString(string, "%").c_str()) / 100.0f));
 	}
 	else
@@ -60,7 +60,7 @@ void Label::SetText(cchar* text)
 	SetHeight(0);
 }
 
-void Label::SetText(cchar* file, uchar size, cchar* text)
+void Label::SetText(cchar* file, usint size, cchar* text)
 {
 	_staticText = XAGUI::GetRenderer()->GetStaticText(file, size, text);
 	SetWidth(0);
@@ -81,6 +81,12 @@ void Label::SetColor(ControlState controlState, uchar red, uchar green, uchar bl
 {
 	Control::SetColor(controlState, red, green, blue, alpha);
 	_staticText->SetColor(red, green, blue, alpha);
+}
+
+void Label::SetColor(ControlState controlState, SDL_Color color)
+{
+	Control::SetColor(controlState, color);
+	_staticText->SetColor(color.r, color.g, color.b, color.a);
 }
 
 };

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form skin="res/skin.png" id="frmTest" x="0" y="0" w="AUTO" h="AUTO" srcX="0" srcY="0" srcW="900" srcH="1246">
+	<control type="Button" id="btnPressMe" x="0.51r" y="0.5r" w="79" h="26" srcX="900" srcY="108" srcW="79" srcH="26" hSrcX="900" hSrcY="134" aSrcX="900" aSrcY="162" dSrcX="900" dSrcY="188"/>
+	<control type="Button" id="btnPressMe2" x="0.59r" y="0.5r" w="79" h="26" srcX="900" srcY="108" srcW="79" srcH="26" hSrcX="900" hSrcY="134" aSrcX="900" aSrcY="162" dSrcX="900" dSrcY="188"/>
+	<control type="Button" id="btnPressMe3" x="0.67r" y="0.5r" w="79" h="26" srcX="900" srcY="108" srcW="79" srcH="26" hSrcX="900" hSrcY="134" aSrcX="900" aSrcY="162" dSrcX="900" dSrcY="188"/>
+	<control type="Window" id="wndButtons" x="0" y="0" w="0.29296875r" h="0.390625r" srcX="900" srcY="409" srcW="300" srcH="300" dragAreaW="300" dragAreaH="41">
+		<control type="Button" id="btnPressMe" x="5" y="0.15r" w="0.2633333333333333r" h="0.0866666666666667r" srcX="900" srcY="108" srcW="79" srcH="26" hSrcX="900" hSrcY="134" aSrcX="900" aSrcY="162" dSrcX="900" dSrcY="188"/>
+		<control type="Button" id="btnPressMe2" x="0.5r" y="0.15r" w="0.2633333333333333r" h="0.0866666666666667r" srcX="900" srcY="108" srcW="79" srcH="26" hSrcX="900" hSrcY="134" aSrcX="900" aSrcY="162" dSrcX="900" dSrcY="188"/>
+		<control type="CheckBox" id="cbCheckBox" x="5" y="0.275r" w="0.0533333333333333r" h="0.0533333333333333r" srcX="979" srcY="133" srcW="16" srcH="16" cSrcX="979" cSrcY="151"/>
+		<control type="RadioButton" id="rbRadioButton" x="5" y="0.35r" w="0.0533333333333333r" h="0.0533333333333333r" srcX="979" srcY="170" srcW="16" srcH="16" cSrcX="979" cSrcY="189"/>
+	</control>
+	
+	<control type="Window" id="wndTextBoxes" x="0" y="0" w="0.29296875r" h="0.390625r" srcX="900" srcY="409" srcW="300" srcH="300" align="TOP_HCENTER" dragAreaW="300" dragAreaH="41">
+		<control type="TextBox" id="tbTextBox" x="5" y="0.15r" w="0.6666666666666667r" h="0.0866666666666667r" srcX="979" srcY="106" srcW="161" srcH="26" font="res/arial.ttf" fSize="14%" tX="0.02r" tY="0.45r" 
+			text="This is text box!"/>
+		<control type="PasswordTextBox" id="tbPasswordTextBox" x="5" y="0.275r" w="0.6666666666666667r" h="0.0866666666666667r" srcX="979" srcY="106" srcW="161" srcH="26" font="res/arial.ttf" fSize="14%" tX="0.02r" tY="0.45r" 
+			text="Password" passwordChar="*"/>
+	</control>
+	
+	<control type="Window" id="wndSliders" x="0" y="0" w="0.29296875r" h="0.390625r" srcX="900" srcY="409" srcW="300" srcH="300" align="TOP_RIGHT" dragAreaW="300" dragAreaH="41">
+		<control type="Slider" id="sldHSlider" x="5" y="0.125r" w="0.8033333333333333r" h="0.0533333333333333r" srcX="1013" srcY="134" srcW="241" srcH="16" mW="0.0663900414937759r" mH="1r" mSrcX="996" mSrcY="134" mSrcW="16" 
+			mSrcH="16" minValue="0" maxValue="100" value="50"/>
+		<control type="Label" id="lblHSliderValue" x="-0.05r" y="-0.045r" align="BOTTOM_RIGHT" font="res/arial.ttf" fSize="14%" text="Horizontal Slider Value: "/>
+		
+		<control type="Slider" id="sldVSlider" x="5" y="0.175r" w="0.0533333333333333r" h="0.8033333333333333r" srcX="996" srcY="151" srcW="16" srcH="241" mW="1r" mH="0.0663900414937759r" mSrcX="996" mSrcY="134" mSrcW="16" 
+			mSrcH="16" orientation="VERTICAL" minValue="0" maxValue="100" value="25"/>
+		<control type="Label" id="lblVSliderValue" x="-0.05r" y="0" align="BOTTOM_RIGHT" font="res/arial.ttf" fSize="14%" text="Vertical Slider Value: "/>
+	</control>
+	
+	<control type="Label" id="lblAnalogStickValueX" x="0" y="-0.025r" align="BOTTOM_HCENTER" font="res/arial.ttf" fSize="14%" text="Analog Stick Value X: "/>
+	<control type="Label" id="lblAnalogStickValueY" x="0" y="0" align="BOTTOM_HCENTER" font="res/arial.ttf" fSize="14%" text="Analog Stick Value Y: "/>
+	<control type="AnalogStick" id="asAnalogStick" x="-0.01r" y="-0.01r" w="0.244140625r" h="0.3255208333333333r" srcX="1747" srcY="0" srcW="250" srcH="250" align="BOTTOM_RIGHT" sSrcX="1747" sSrcY="281"/>
+</form>

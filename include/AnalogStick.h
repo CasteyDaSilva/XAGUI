@@ -89,6 +89,18 @@ class AnalogStick : public Button
 		 * @param stickX New absolute Y position of stick.
 		 */
 		virtual void SetStickY(sint stickY);
+		
+		/**
+		 * Sets X value of stick.
+		 * @param valueX New X value of stick.
+		 */
+		virtual void SetValueX(float valueX);
+
+		/**
+		 * Sets Y value of stick.
+		 * @param valueY New Y value of stick.
+		 */
+		virtual void SetValueY(float valueY);
 
 		/**
 		 * Sets X position of texture region of stick.
@@ -113,16 +125,32 @@ class AnalogStick : public Button
 		 * @param x X position of mouse.
 		 * @param y Y position of mouse.
 		 */
-		virtual void MouseMoveEvent(int x, int y);
+		virtual Control* MouseMoveEvent(int x, int y);
 
 		/**
 		 * Moves analog stick to mouse position when mouse button is pressed.
 		 * @param x X position of mouse.
 		 * @param y Y position of mouse.
 		 * @param button Pressed mouse button.
-		 * @param down Whether is pressed button.
 		 */
-		virtual bool MouseButtonEvent(int x, int y, MouseButton button, bool down);
+		virtual Control* MouseButtonDownEvent(int x, int y, uchar button);
+	
+		/**
+		 * @param x X position of mouse.
+		 * @param y Y position of mouse.
+		 * @param button Released mouse button.
+		 */
+		virtual void MouseButtonUpEvent(int x, int y, uchar button);
+
+		/**
+		 * Called when control sets value.
+		 * @param value New value
+		 */
+		virtual void OnValueChangedEvent();
+
+	public:
+
+		OnValueChanged onValueChanged;
 
 	protected:
 

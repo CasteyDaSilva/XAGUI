@@ -1,8 +1,6 @@
 #ifndef XAGUI_SLIDER_H
 #define XAGUI_SLIDER_H
 
-typedef fastdelegate::FastDelegate2<Control*, int, void> OnValueChanged;
-
 class Slider : public Button
 {
 	public:
@@ -120,16 +118,25 @@ class Slider : public Button
 		 * @param x X position of mouse.
 		 * @param y Y position of mouse.
 		 */
-		virtual void MouseMoveEvent(int x, int y);
+		virtual Control* MouseMoveEvent(int x, int y);
 
 		/**
 		 * Moves marker to mouse position when mouse button is pressed.
 		 * @param x X position of mouse.
 		 * @param y Y position of mouse.
 		 * @param button Pressed mouse button.
-		 * @param down Whether is pressed button.
 		 */
-		virtual bool MouseButtonEvent(int x, int y, MouseButton button, bool down);
+		virtual Control* MouseButtonDownEvent(int x, int y, uchar button);
+		
+		virtual void MarkerOnMouseMove(Control* control, int x, int y);
+
+		virtual void MarkerOnMouseButtonDown(Control* control, int x, int y, uchar button);
+
+		/**
+		 * Called when control sets value.
+		 * @param value New value
+		 */
+		virtual void OnValueChangedEvent();
 
 	public:
 
@@ -146,8 +153,6 @@ class Slider : public Button
 		int _value;
 		int _minValue;
 		int _maxValue;
-
-		bool _pressed;
 };
 
 #endif

@@ -22,6 +22,12 @@ class Form : public PictureBox
 		virtual tinyxml2::XMLError Load(cchar* file);
 		
 		/**
+		 * Loads form from buffer.
+		 * @param buffer Buffer with xml file data.
+		 */
+		virtual tinyxml2::XMLError LoadFromMemory(cchar* buffer);
+		
+		/**
 		 * Renders control.
 		 */
 		virtual void Render();
@@ -31,24 +37,6 @@ class Form : public PictureBox
 		 * @return Form skin.
 		 */
 		virtual inline Texture* GetSkin() const { return PictureBox::GetImage(); }
-
-	public:
-
-		/**
-		 * Sends mouse move event to all children.
-		 * @param x X position of mouse.
-		 * @param y Y position of mouse.
-		 */
-		virtual void MouseMoveEvent(int x, int y);
-
-		/**
-		 * Sends mouse button event to all children.
-		 * @param x X position of mouse.
-		 * @param y Y position of mouse.
-		 * @param button Pressed mouse button.
-		 * @param down Whether is pressed button.
-		 */
-		virtual bool MouseButtonEvent(int x, int y, MouseButton button, bool down);
 };
 
 #endif
